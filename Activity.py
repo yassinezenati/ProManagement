@@ -12,6 +12,8 @@ class Activity:
         self.name = name
         self.successors = successors  #list of Activity
         self.duration = duration
+        self.dateStart = -1
+        self.dateEnd = -1
         self.normalCost = normalCost
         self.topCost = topCost
         self.reductionCost = reductionCost
