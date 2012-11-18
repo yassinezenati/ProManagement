@@ -13,17 +13,26 @@ class Activity:
         self.successors = successors  #list of Activity
         self.predecessors = [] #list of Activity
         self.duration = duration
-        self.dateStart = -1
-        self.dateEnd = -1
+        self.EST = -1 # EST = Early Start Time 
+        self.LST = -1 # LST = Late Start Time
         self.normalCost = normalCost
         self.topCost = topCost
         self.reductionCost = reductionCost
         self.ressources = ressources #List of ressources
         
     def display(self):
+        print ("==>" + str(self.name)+ "<==")
         print str(self.ident) + " " + str(self.name) + " " + str(self.duration) +  " "  + str(self.normalCost) + " " + str(self.topCost) + " " + str(self.reductionCost) + " "
+        print ("suc :")
         if (not self.successors is None):
             for suc in self.successors: 
-                print suc.ident
+                print suc.name
+        print ("pred: ")
+        if (not self.predecessors is None):
+            for pred in self.predecessors: 
+                print pred.name
+        print ("res: ")
+        print ("EST = " + str(self.EST))
+        print ("LST = " + str(self.LST))
         print self.ressources 
         
