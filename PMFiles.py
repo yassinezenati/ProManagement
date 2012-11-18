@@ -28,14 +28,17 @@ class PMFiles:
                 (First integer is the amount of the first ressource and so on)
         
         """
-        listActivities = []
+        listActivities = {}
         f = csv.reader(open(fileActivities,"rb"))
         for line in f:
+            # cast each value as an int
             ident = int(line[0])
             name = line[1]
             successors = ""
             if (line[2] != ""):
                 successors = map(int, line[2].split(";"))
+            else:
+                successors = None
             duration = int(line[3])
             normalCost = int(line[4])
             topCost = int(line[5])
@@ -44,6 +47,14 @@ class PMFiles:
             if (line[3] != ""):
                 ressources = map(int, line[7].split(";"))
             act = Activity(ident, name, successors, duration, normalCost, topCost, reductionCost, ressources)
-            listActivities.insert(act.ident, act)
-        return listActivities
+            listActivities[act.ident] = act
+            
+        for act in listActivities.values(): # replace activities id by activities in successors
+            if (not act.successors is None):
+                count = 0
+                while (count < len(act.successors)):
+                    sucId = act.successors.pop(0)
+                    act.successors.append(listActivities[sucId])
+                    count = count + 1
+        return listActivities.values()
     

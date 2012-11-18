@@ -11,6 +11,7 @@ class Activity:
         self.ident = ident
         self.name = name
         self.successors = successors  #list of Activity
+        self.predecessors = [] #list of Activity
         self.duration = duration
         self.dateStart = -1
         self.dateEnd = -1
@@ -21,6 +22,8 @@ class Activity:
         
     def display(self):
         print str(self.ident) + " " + str(self.name) + " " + str(self.duration) +  " "  + str(self.normalCost) + " " + str(self.topCost) + " " + str(self.reductionCost) + " "
-        print self.successors
+        if (not self.successors is None):
+            for suc in self.successors: 
+                print suc.ident
         print self.ressources 
         
