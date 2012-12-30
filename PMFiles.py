@@ -26,8 +26,11 @@ class PMFiles:
             7. Reduction Cost
             8. Ressources : set of integer delimited by the symbol ";"
                 (First integer is the amount of the first ressource and so on)
+                
+               
         
         """
+        
         listActivities = {}
         f = csv.reader(open(fileActivities,"rb"))
         for line in f:
