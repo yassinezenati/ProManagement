@@ -1,7 +1,7 @@
 '''
 Created on 11 nov. 2012
 
-@author: yassine
+@author: Salah Benmoussati, Yassine Zenati
 
 This class provides methods to read the input file and to produce output files
 

@@ -1,7 +1,7 @@
 '''
 Created on 17 nov. 2012
 
-@author: yassine
+@author: Salah Benmoussati, Yassine Zenati
 
 This class defines an Activity, which is a set of properties of one activity (name, duration, cost...)
 '''
@@ -16,6 +16,9 @@ class Activity:
         self.EST = -1 # EST = Early Start Time 
         self.LST = -1 # LST = Late Start Time
         self.LFT = -1
+        self.startTime = -1 # Programmed Start Time (Integer like Day 0)
+        self.dateStartTime= -1 # Programmed Start Date Time (date)
+        self.seq = 0 # Temporary variable useful for the sequencing algorithms
         self.normalCost = normalCost
         self.topCost = topCost
         self.reductionCost = reductionCost
