@@ -7,7 +7,7 @@ This class defines an Activity, which is a set of properties of one activity (na
 '''
 
 class Activity:
-    def __init__(self, ident,  name, successors, duration, normalCost, topCost, reductionCost, ressources):
+    def __init__(self, ident,  name, successors, duration, resources):
         self.ident = ident
         self.name = name
         self.successors = successors  #list of Activity
@@ -19,10 +19,7 @@ class Activity:
         self.startTime = -1 # Programmed Start Time (Integer like Day 0)
         self.dateStartTime= -1 # Programmed Start Date Time (date)
         self.seq = 0 # Temporary variable useful for the sequencing algorithms
-        self.normalCost = normalCost
-        self.topCost = topCost
-        self.reductionCost = reductionCost
-        self.ressources = ressources #List of ressources
+        self.resources = resources #List of resources
         
     def display(self):
         print ("                       ==>" + str(self.name)+ "<==")
@@ -41,5 +38,5 @@ class Activity:
         print ("EST = " + str(self.EST))
         print ("LST = " + str(self.LST))
         print ("LFT = " + str(self.LFT))
-        print self.ressources 
+        print self.resources 
         

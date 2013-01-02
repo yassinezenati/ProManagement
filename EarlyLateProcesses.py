@@ -5,7 +5,7 @@ Created on 30 déc. 2012
 '''
 from toolsCalculus import minStartTime, seqActivity
 
-def earlyOrLateProcess(listActivities, projectRessources, late):
+def earlyOrLateProcess(listActivities, projectresources, late):
     """ Proceso adelanto or retraso, depending if late is True or not
         (late is True <=> proceso de retraso)
     """
@@ -13,10 +13,10 @@ def earlyOrLateProcess(listActivities, projectRessources, late):
     # Sort the list of activities by finish date time
     sortedList = sorted(listActivities, key=lambda activity: activity.startTime + activity.duration, reverse=late)
     
-    #Initialisation of the tab of ressources
+    #Initialisation of the tab of resources
     
     maxProjectDuration = sum(act.duration for act in listActivities)
-    tabRessources = [projectRessources] * maxProjectDuration
+    tabresources = [projectresources] * maxProjectDuration
     
     for act in sortedList:
         # If we are processing retraso, the an activity has to be sequenced after its successors
@@ -25,7 +25,7 @@ def earlyOrLateProcess(listActivities, projectRessources, late):
             minStartTime = minStartTime(act.successors)
         else:
             minStartTime = minStartTime(act.predecessors)
-        seqActivity(act, minStartTime, tabRessources, late)
+        seqActivity(act, minStartTime, tabresources, late)
         
     # Update of the startTime field
     

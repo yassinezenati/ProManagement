@@ -1,5 +1,5 @@
 '''
-Created on 30 déc. 2012
+Created on 30 dec. 2012
 
 @author: Salah Benmoussati, Yassine Zenati
 '''

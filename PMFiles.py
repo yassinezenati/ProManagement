@@ -22,12 +22,8 @@ class PMFiles:
             3. Successors : set of activities' id delimited by the symbol ";"
             4. Duration
             5. Normal Cost 
-            6. Top Cost
-            7. Reduction Cost
-            8. Ressources : set of integer delimited by the symbol ";"
+            8. resources : set of integer delimited by the symbol ";"
                 (First integer is the amount of the first ressource and so on)
-                
-               
         
         """
         
@@ -43,13 +39,10 @@ class PMFiles:
             else:
                 successors = None
             duration = int(line[3])
-            normalCost = int(line[4])
-            topCost = int(line[5])
-            reductionCost = int(line[6])
-            ressources = ""
-            if (line[3] != ""):
-                ressources = map(int, line[7].split(";"))
-            act = Activity(ident, name, successors, duration, normalCost, topCost, reductionCost, ressources)
+            resources = ""
+            if (line[4] != ""):
+                resources = map(int, line[4].split(";"))
+            act = Activity(ident, name, successors, duration, resources)
             listActivities[act.ident] = act
             
         for act in listActivities.values(): # replace activities id by activities in successors

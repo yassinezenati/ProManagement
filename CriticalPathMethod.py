@@ -1,5 +1,5 @@
 '''
-Created on 30 déc. 2012
+Created on 30 dec. 2012
 
 @author: Salah Benmoussati, Yassine Zenati
 '''
@@ -9,8 +9,6 @@ import datetime
 def criticalPathMethod(listActivities):
     """ CPM algorithm
     """
-    
-    listCriticalPath = []
     
     # First step : order the activity
     listOrdenedAct = []
@@ -65,8 +63,6 @@ def criticalPathMethod(listActivities):
                 if (suc.LST - act.duration < minDate):
                     minDate = suc.LST - act.duration
             act.LST = minDate
-        if (act.EST == act.LST):
-            listCriticalPath.append(act)
         
     print ("Starting of the project : "),
     print startDate 
