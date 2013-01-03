@@ -68,7 +68,15 @@ def addRes(res1, res2):
         res.insert(i, res1[i] + res2[i])
     return res
             
-
+def overUseRes(res1, res2):
+    """ Evaluate if at least one resource of res1 exceed 
+        its equivalent in res2
+    """
+    for i in range(len(res1)):
+        if res1[i] > res2[i]:
+            return True
+    return False
+    
 def seqActivity(act, minStartTime, tabresources):
     """ This function sequences the activity :
             1. finds the first day with enough resources so that we can sequence the activity 
@@ -97,4 +105,3 @@ def find_all_paths(act, path=[]):
                     paths.append(newpath)
         return paths
     
-
