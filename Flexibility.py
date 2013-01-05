@@ -4,15 +4,17 @@ Created on 2 janv. 2013
 @author: Salah Benmoussati, Yassine Zenati
 '''
 
-from toolsCalculus import totalFloatEarly, totalFloatLate, addRes
+from toolsCalculus import totalFloatEarly, totalFloatLate, addRes, projectDuration
 from ResourceLeveling import buildNewResourceList
 
-def analyseActivity(listActivities, act, projectDuration, projectResources):
+def analyseActivity(listActivities, act, projectResources):
+    
+    projectDur = projectDuration(listActivities)
     
     # Build a table of resources per day 
     
     nbResources = len(listActivities[1].resources)
-    listResources = [[0] * nbResources] * projectDuration
+    listResources = [[0] * nbResources] * projectDur
     
     for activitiy in listActivities:
         if (activitiy.ident == -1 or activitiy.ident == -2):
@@ -26,7 +28,7 @@ def analyseActivity(listActivities, act, projectDuration, projectResources):
     print "The activity " + act.name + " is supposed to start the day " + str(act.startTime)
     
     # Processing the total float for each side
-    totalRightFloat = totalFloatLate(act, projectDuration)
+    totalRightFloat = totalFloatLate(act, projectDur)
     totalLeftFloat = totalFloatEarly(act)
     print "float on the left = " + str(totalLeftFloat) 
     print "float on the right = " + str(totalRightFloat)

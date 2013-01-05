@@ -12,7 +12,7 @@ from Activity import Activity
 
 class PMFiles:
     @staticmethod
-    def read(fileActivities):
+    def readAct(fileActivities):
         """Reads the input file 
         
         The file must be a CSV file
@@ -57,4 +57,24 @@ class PMFiles:
                     act.successors.append(listActivities[sucId])
                     count = count + 1
         return listActivities.values()
+    
+    @staticmethod
+    def readConfProject(fileConf):
+        f = open(fileConf,"rb")
+        conf = {}
+        cpt = 0
+        listDaysOff = []
+        for line in f:
+            if cpt == 0:
+                conf["projectName"] = line
+            elif cpt == 1:
+                conf["resources"] = map(int, line.split(";"))
+            elif cpt == 2:
+                conf["beginningDate"] = map(int, line.split("/"))
+            else:
+                listDaysOff.append(map(int, line.split("/")))
+            cpt += 1
+        conf["daysOff"] = listDaysOff
+        f.close()
+        return conf
     

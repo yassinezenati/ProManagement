@@ -14,8 +14,16 @@ from ResourceLeveling import resourceLeveling
 from Flexibility import analyseActivity
 
 fileName = sys.argv[1]
-listActivities = PMFiles.read(fileName)
-            
+listActivities = PMFiles.readAct(fileName)
+conf = PMFiles.readConfProject(sys.argv[2])
+
+projectName = conf["projectName"]
+resources = conf["resources"]
+beginDate = conf["beginningDate"]
+daysOffs = conf["daysOff"]
+
+print daysOffs
+
 buildList(listActivities)
 
 #earlyOrLateProcess(listActivities, [5,8,7,6], True)
@@ -29,8 +37,7 @@ resourceLeveling(listActivities, [30,20])
 for act in listActivities:
     print act.name + "startTime = " + str(act.startTime)
 
-projectDur = projectDuration(listActivities)
-analyseActivity(listActivities, listActivities[10], projectDur, [5,8,7,6])
+#analyseActivity(listActivities, listActivities[10], [5,8,7,6])
 
 """
 criticalPathMethod(listActivities)
