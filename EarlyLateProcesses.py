@@ -9,7 +9,7 @@ def earlyOrLateProcess(listActivities, projectresources, late):
     """ Proceso adelanto or retraso, depending if late is True or not
         (late is True <=> proceso de retraso)
     """
-    print "hey"
+    
     # Sort the list of activities by finish date time
     sortedList = sorted(listActivities, key=lambda activity: activity.startTime + activity.duration, reverse=late)
     
