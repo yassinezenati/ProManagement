@@ -43,8 +43,6 @@ def resourceLeveling(listActivities, projectResources):
                 
         # Try every position (sequenciation) available until we reach the end of
         # the total float (holgura total)
-        
-        
        
         oldListRSD = evaluateResourceList(minimizedList)
         
