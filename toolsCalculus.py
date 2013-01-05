@@ -38,7 +38,8 @@ def minStartTime(listAct):
         of its predecessors or successors (depending if we are doing "adelanto" or "retraso")
         The param listAct is the list of the activity's pred or succ..
     """
-    return max(listAct, key=lambda activity: activity.seq + activity.duration).seq
+    maxAct = max(listAct, key=lambda activity: activity.seq + activity.duration)
+    return maxAct.seq + maxAct.duration 
 
 def isSeq(act, resources):
     """ return true if the activity's resources are less or equal than the resources given in parameter  
@@ -54,24 +55,19 @@ def minusRes(res1, res2):
     """ Process the the operation res = res1 - res2
         res, res1 and res2 being lists of resources
     """
-    res = []
-    for i in range(len(res1)):
-        res.insert(i, res1[i] - res2[i])
-    return res
-    
+    return [(x - y) for x, y in zip(res1, res2)]
+
 def addRes(res1, res2):
     """ Process the the operation res = res1 +  res2
         res, res1 and res2 being lists of resources
     """
-    res = []
-    for i in range(len(res1)):
-        res.insert(i, res1[i] + res2[i])
-    return res
+    return [(x + y) for x, y in zip(res1, res2)]
             
 def overUseRes(res1, res2):
     """ Evaluate if at least one resource of res1 exceed 
         its equivalent in res2
     """
+    
     for i in range(len(res1)):
         if res1[i] > res2[i]:
             return True
@@ -88,9 +84,10 @@ def seqActivity(act, minStartTime, tabresources):
     for listRes in tabresources[minStartTime:]: 
         if isSeq(act, listRes):
             act.seq = count # Update of the startTime
-            for res in tabresources[count:count+act.duration]:
+            for cpt, res in enumerate(tabresources[count:count+act.duration]):
                 res = minusRes(res, act.resources)
-            break 
+                tabresources[count + cpt] = res
+            break
         count += 1
         
 def find_all_paths(act, path=[]):
@@ -104,4 +101,86 @@ def find_all_paths(act, path=[]):
                 for newpath in newpaths:
                     paths.append(newpath)
         return paths
+    
+def projectDuration(listActivities):
+    """ Process the duration of the project
+    """
+    lastAct = max(listActivities, key=lambda activity: activity.startTime)
+    return lastAct.startTime + lastAct.duration
+    
+def findNonCriticalAct(listActivities):
+    """ Returns non critical activities and write in projectDuration the duration of the project
+    """    
+    # Find all paths and critical paths
+    
+    listPaths = find_all_paths(listActivities[0])
+    listDurations = []
+    for cpt, path in enumerate(listPaths):
+        listDurations.append(sum(act.duration for act in path))
+    projectDuration = max(listDurations)
+    listCriticalPaths = []
+    for cpt, path in enumerate(listPaths):
+        if listDurations[cpt] == projectDuration:
+            listCriticalPaths.append(path)
+    listNonCritActs = []
+    for act in listActivities:
+        if act not in sum(listCriticalPaths, []):
+            listNonCritActs.append(act)
+    return listNonCritActs
+
+def totalFloatLate(act, projectDuration):
+    """ Process the late total float (holgura total de retraso) of an activity
+    """
+    endTimeAct = act.startTime + act.duration
+
+    if act.successors[0].ident == -2:
+        totalFloat = projectDuration - endTimeAct
+    else:  
+        totalFloat = act.successors[0].startTime - endTimeAct
+        for suc in act.successors[1:]:
+            if suc.startTime - endTimeAct < totalFloat:
+                totalFloat = suc.startTime - endTimeAct
+            
+    return totalFloat
+
+def totalFloatEarly(act):
+    """ Process the early total float (holgura total de adelanto) of an activity
+    """
+    
+    if act.predecessors[0].ident == -1:
+        totalFloat = act.startTime
+    else:
+        totalFloat = act.startTime - (act.predecessors[0].startTime + act.predecessors[0].duration)
+        for pred in act.predecessors[1:]:
+            if act.startTime - (pred.startTime + pred.duration) < totalFloat:
+                totalFloat = act.startTime - (pred.startTime + pred.duration)
+    return totalFloat
+
+def activitySearch (listAct,activity):
+    """
+    this function return true if an activity is found in a given list
+    """
+    
+    for act in listAct:
+        if (act.name == activity.name): 
+            return True
+        
+def predComplete (activity, completeList):
+    """
+    this function return true if all the predecessors of an activity are already completed
+    """
+    prednb=len(activity.predecessors) 
+    predcount=0
+    
+    for pred in activity.predecessors : 
+        if pred.name=="start" : 
+            prednb-=1
+        else : 
+            for acc in completeList:
+                if acc.name==pred.name:
+                    predcount+=1
+        if predcount==prednb :
+            return True
+
+
     

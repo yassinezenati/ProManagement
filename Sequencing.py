@@ -4,145 +4,82 @@ Created on 30 dec. 2012
 @author: Salah Benmoussati, Yassine Zenati
 '''
 
-from ParallelAct import ParallelAct
+from Activity import Activity
+from toolsCalculus import addRes, minusRes, predComplete, isSeq, activitySearch
 
 def parallelSequencing(listActivities) : 
-   
+
     #initialization
-    dispo = [20,30]
+    available = [7,6]
     chosenAct = []
     copy=[]
     sequencing = []
     complete = []
     instant = 0
-    count=0
-    finish="false"
-    for act in listActivities :       #initialization 
-        for pred in act.predecessors :
-            if (pred.ident == -1):
-                chosenAct.append(act)
+    finish=False
+   
+    #initialization with successors of START
+    chosenAct.extend(listActivities[0].successors)
                 
-    for act in listActivities :
-        for pred in act.predecessors :
-            if (pred.ident == -2):
-                count+=1
-    while (finish=="false") : 
+    while (finish==False) : 
         
-        sequencing = sorted(sequencing, key=lambda ac: ac.seq)
-        copy= sorted(copy, key=lambda activity: activity.LFT)
+        sequencing = sorted(sequencing, key=lambda ac: ac.seq)  
+        copy= sorted(copy, key=lambda activity: activity.LFT) #activities arranged in LFT order
         
             
-        if(len(listActivities)==(len(complete)+len(sequencing))):
+        if(len(listActivities)==(len(complete)+len(sequencing))): #if all the activities are handled : 
             instant=complete[len(complete)-1].seq
             for seq  in sequencing : 
                 complete.append(seq)
                 sequencing.remove(seq)
-                  
-            sequencing = sorted(sequencing, key=lambda activity: activity.seq)
-            finish="true"
-        else : 
-            print"-------------------------- dispo debut : ",dispo 
-    
-            print "-----------tournee   ",count, "instant      ",instant
+            finish = True 
             
+        else : 
             chosenAct=sorted(chosenAct, key=lambda activity: activity.LFT) # Order LFT
             sequencing=sorted(sequencing, key=lambda activity: activity.seq) # Order LFT
-            copy=sorted(copy, key=lambda activity: activity.LFT)
-            copy=list(chosenAct)
-            for pa in sequencing : 
-                    print "voici les sequences : ",pa.name, "temps : ", pa.seq
+         
+            for pa in sequencing :  
                     if (pa.seq<=instant):
-                        j=0
-                        while (j<len(dispo)) :
-                            print "                ressources a voir :         ",pa.ressources[j]
-                            dispo[j]=dispo[j] + pa.ressources[j]
-                            j=j+1
+                        
+                        available = addRes(available, pa.resources) #update of resources
                         complete.append(pa)
                         sequencing.remove(pa)
-                        prednb=0
-                        for succ in pa.succ : 
-                            if succ.name!="end":
-                                found="no"
-                                #trouver condition pour verifier avec les pred s'ils sont finis ou non
+                        for succ in pa.successors :  #verify if the activity is already in the chosen activities list or not to avoid repetition when adding 
+                            found=False
+                            if succ.ident != -2: 
                                 for find in chosenAct :
-                                    if succ.name==find.name:
-                                        found="yes"
+                                    if succ.name == find.name:
+                                        found = True  
                                 
-                                
-                                prednb=len(succ.predecessors)
-                                predcount=0
-                                for pred in succ.predecessors : 
-                                    if pred.name=="start" : 
-                                        prednb-=1
-                                    else : 
-                                        for acc in complete:
-                                            if acc.name==pred.name:
-                                                predcount+=1
-                                    if predcount==prednb:
-                                        print " nombre de predecesseurs : ",prednb
-                                        if found=="no":
-                                            chosenAct.append(succ)
-                                            print found
-                                            print "succ : ",succ.name
-            print " dispoooo ", dispo           
-            print "longueur : ",len(copy) 
+                                if predComplete(succ, complete) == True and found == False : 
+                                    chosenAct.append(succ)
+                                            
+             
             copy=list(chosenAct)
             copy= sorted(copy, key=lambda activity: activity.LFT)  
-            for act in copy :
-                i=0
-                positif="true"
-                print "activite  parcourues : ",act.name
-                
-                
-                for acta in chosenAct : 
-                    print "aaaaaa- ",acta.name
-                
-                while (i<len(dispo)) and (positif =="true"): 
-                    if ((dispo[i]-act.ressources[i])<0):
-                        positif="false"
-                    i=i+1
-                if (positif == "true") :
+            for act in copy :    #Next step : sequencing the selected activity if not already sequenced thanks to an other predecessor
+                if (isSeq(act,available) == True) :
+                    parAct = Activity(act.ident,act.name,act.successors,act.duration,act.resources)
+                    parAct.seq = instant+act.duration
+                    parAct.predecessors = act.predecessors
+                    done = False
                     
-                    print "activite valide :", act.name , "duree : ", act.duration
-                    parAct = ParallelAct(act.name,instant+act.duration,act.ressources,act.successors,act.predecessors)
-                    
-                    done="false"
-                    for seq in sequencing:
-                        
-                        if (seq.name == act.name): 
-                            done ="true"
-                            chosenAct.remove(act)
-                    for comp in complete:
-                        
-                        if (comp.name == act.name): 
-                            done ="true"
-                            chosenAct.remove(act)
-                    if (done=="false") : 
-                        sequencing.append(parAct)
-                        count+=1
-                        
-                        
-                        j=0
-                        while (j<len(dispo)) :
-                            print "                                  soustraction faite"
-                            dispo[j]=dispo[j] - act.ressources[j]
-                            j=j+1
+                    if activitySearch(sequencing,act) == True or activitySearch(complete,act) == True  : 
+                        done = True
                         chosenAct.remove(act)
-               
+             
+                    if (done == False) :  # if the activity is not already sequenced by an other predecessor : 
+                        sequencing.append(parAct)
+                        available = minusRes(available, act.resources) #update of resources
+                        chosenAct.remove(act)
             sequencing = sorted(sequencing, key=lambda activity: activity.seq)
-                             
-            print("============================================================================")
-            for act in complete : 
-                print "--------------------------activite : ", act.name , " finie  l instant ", act.seq 
-            print("============================================================================")
-            for act in listActivities : 
-                print "--------------------------activite : ", act.name , " duree ", act.duration
-
             if (len(complete)+2)<len(listActivities):
                 instant = sequencing[0].seq 
             else:
-                finish="true"  
+                finish = True  
                         
-                        
-            print dispo 
-            
+    print "============================================================================"
+    for act in complete : 
+        print "--------------------------activity : ", act.name , " finish day ", act.seq
+    print "============================================================================"
+    print available 

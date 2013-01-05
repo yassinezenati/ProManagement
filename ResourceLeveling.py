@@ -3,9 +3,12 @@ Created on 2 janv. 2013
 
 @author: Salah Benmoussati, Yassine Zenati
 '''
-from toolsCalculus import addRes, minusRes, overUseRes
+from toolsCalculus import addRes, minusRes, overUseRes, totalFloatLate, findNonCriticalAct, projectDuration
 
-def resourceLeveling(listActivities, listNonCriticalAct, projectDuration, projectResources):
+def resourceLeveling(listActivities, projectResources):
+    
+    projectDuration = projectDuration(listActivities)
+    listNonCriticalAct = findNonCriticalAct(listActivities)
     
     nbResources = len(listActivities[1].resources) 
     
@@ -13,9 +16,16 @@ def resourceLeveling(listActivities, listNonCriticalAct, projectDuration, projec
     
     listResources = [[0] * nbResources] * projectDuration
     
+    print listResources
+    
     for act in listActivities:
-        for i in range(act.startTime, act.startTime + act.duration + 1):
+        if (act.ident == -1 or act.ident == -2):
+            continue
+        for i in range(act.startTime, act.startTime + act.duration):
             listResources[i] = addRes(act.resources, listResources[i])
+    
+    for cpt, res in enumerate(listResources):
+        print "jour " + str(cpt) + " res = " + str(res)
     
     # Sort the activities by finishing time
     sortedNCA = sorted(listNonCriticalAct, key=lambda activity: activity.startTime + activity.duration, reverse=True)
@@ -24,13 +34,12 @@ def resourceLeveling(listActivities, listNonCriticalAct, projectDuration, projec
     minimizedList = listResources
     
     for act in sortedNCA:
-        endTimeAct = act.startTime + act.duration # Finalisation of the activity
+        print "act = " + act.name
+        if (act.ident == -1 or act.ident == -2):
+            continue
         
-        # Process of the total float (holgura total)
-        totalFloat = act.successors[0].startTime - endTimeAct
-        for suc in act.successors[1:]:
-            if suc.startTime - endTimeAct < totalFloat:
-                totalFloat = suc.startTime - endTimeAct
+        totalFloat = totalFloatLate(act, projectDuration)        
+        print "holgura total = " + str(totalFloat)
                 
         # Try every position (sequenciation) available until we reach the end of
         # the total float (holgura total)
@@ -38,6 +47,8 @@ def resourceLeveling(listActivities, listNonCriticalAct, projectDuration, projec
         
        
         oldListRSD = evaluateResourceList(minimizedList)
+        
+        print "RSD 0 = " + str(oldListRSD)
         
         for seq in range(act.startTime + 1, act.startTime + totalFloat + 1):
             
@@ -50,6 +61,10 @@ def resourceLeveling(listActivities, listNonCriticalAct, projectDuration, projec
                 
                 # Evaluate the new list of resources
                 newListRSD = evaluateResourceList(newList)
+                
+                print "RSD" + str(seq) + " = "  + str(newListRSD)
+                print minimizedList
+                print newList
                 
                 # If the new sequenciation is better
                 # The activity startTime and the oldListRSD and minimizedList are updated
@@ -72,14 +87,17 @@ def buildNewResourceList(listRes, act, newSeq, maxRes):
     
     newList = list(listRes)
     # Delete the resources taken by the activity at its previous sequenciation
-    for day in range(act.startTime,act.startTime+act.duration + 1):
+    for day in range(act.startTime,act.startTime+act.duration):
         newList[day] = minusRes(listRes[day],act.resources)
         
     # Add the resources taken by the activity at its new sequenciation
-    # If overuse of the resources => return None
-    for day in range(newSeq, newSeq+act.duration + 1):
+    # If overuser of the project resources => return None
+        
+    for day in range(newSeq, newSeq+act.duration):
         newRes = addRes(newList[day], act.resources)
         if overUseRes(newRes, maxRes):
+            print newRes
+            print maxRes
             return None
         newList[day] = newRes
     

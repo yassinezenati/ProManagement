@@ -8,27 +8,29 @@ from PMFiles import PMFiles
 import sys
 from CriticalPathMethod import criticalPathMethod
 from Sequencing import parallelSequencing
-from toolsCalculus import find_all_paths, buildList
+from toolsCalculus import find_all_paths, buildList, findNonCriticalAct, projectDuration
+from EarlyLateProcesses import earlyOrLateProcess
+from ResourceLeveling import resourceLeveling
+from Flexibility import analyseActivity
 
 fileName = sys.argv[1]
 listActivities = PMFiles.read(fileName)
             
 buildList(listActivities)
 
-# Find all paths and critical paths 
-listPaths = find_all_paths(listActivities[0])
-listDurations = []
-for cpt, path in enumerate(listPaths):
-    listDurations.append(sum(act.duration for act in path))
-projectDuration = max(listDurations)
-listCriticalPaths = []
-for cpt, path in enumerate(listPaths):
-    if listDurations[cpt] == projectDuration:
-        listCriticalPaths.append(path)
+#earlyOrLateProcess(listActivities, [5,8,7,6], True)
 
-listCriticalAct = sum(listCriticalPaths, [])
-for act in listCriticalAct:
-    print act.name
+#earlyOrLateProcess(listActivities, [5,8,7,6], False)
+
+"""
+print projectDuration
+resourceLeveling(listActivities, [30,20])
+"""
+for act in listActivities:
+    print act.name + "startTime = " + str(act.startTime)
+
+projectDur = projectDuration(listActivities)
+analyseActivity(listActivities, listActivities[10], projectDur, [5,8,7,6])
 
 """
 criticalPathMethod(listActivities)

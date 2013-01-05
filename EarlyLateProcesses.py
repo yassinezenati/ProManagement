@@ -1,5 +1,5 @@
 '''
-Created on 30 déc. 2012
+Created on 30 dec. 2012
 
 @author: Salah Benmoussati, Yassine Zenati
 '''
@@ -9,7 +9,7 @@ def earlyOrLateProcess(listActivities, projectresources, late):
     """ Proceso adelanto or retraso, depending if late is True or not
         (late is True <=> proceso de retraso)
     """
-    
+    print "hey"
     # Sort the list of activities by finish date time
     sortedList = sorted(listActivities, key=lambda activity: activity.startTime + activity.duration, reverse=late)
     
@@ -19,22 +19,32 @@ def earlyOrLateProcess(listActivities, projectresources, late):
     tabresources = [projectresources] * maxProjectDuration
     
     for act in sortedList:
+        # We don't want to process the startActivity nor the end Activity
+        if act.ident == -1 or act.ident == -2:
+            continue
+        
         # If we are processing retraso, the an activity has to be sequenced after its successors
         # Otherwise it's after its predecessors
+        minST = 0 # We have to initialize this variable
         if late:
-            minStartTime = minStartTime(act.successors)
+            minST = minStartTime(act.successors)
         else:
-            minStartTime = minStartTime(act.predecessors)
-        seqActivity(act, minStartTime, tabresources, late)
-        
+            minST = minStartTime(act.predecessors)
+        seqActivity(act, minST, tabresources)
     # Update of the startTime field
     
-    projectDuration = sortedList[-1].seq  + sortedList[-1].duration # project duration = last activity's end date
-    
     if late:
+        projectDuration = sortedList[-3].seq  + sortedList[-3].duration # project duration = first activity's seq + duration
+        print projectDuration
         for act in listActivities:
-            act.startTime = projectDuration - (act.seq + act.duration)
+            if not act.ident == -1:
+                act.startTime = projectDuration - (act.seq + act.duration)
+                print act.name + "startTime : " + str(act.startTime)
     else:
+        projectDuration = sortedList[-1].seq  + sortedList[-1].duration
         for act in listActivities:
-            act.startTime = act.seq
-            
+            if not act.ident == -1:
+                act.startTime = act.seq
+                act.seq = 0
+                print act.name + "startTime : " + str(act.startTime)
+        

@@ -42,7 +42,11 @@ class PMFiles:
             resources = ""
             if (line[4] != ""):
                 resources = map(int, line[4].split(";"))
-            act = Activity(ident, name, successors, duration, resources)
+            if (line[5] != ""):
+                startTime = int(line[5])
+            else:
+                startTime = -1
+            act = Activity(ident, name, successors, duration, resources, startTime)
             listActivities[act.ident] = act
             
         for act in listActivities.values(): # replace activities id by activities in successors

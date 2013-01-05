@@ -7,7 +7,7 @@ This class defines an Activity, which is a set of properties of one activity (na
 '''
 
 class Activity:
-    def __init__(self, ident,  name, successors, duration, resources):
+    def __init__(self, ident,  name, successors, duration, resources, startTime = -1):
         self.ident = ident
         self.name = name
         self.successors = successors  #list of Activity
@@ -16,7 +16,7 @@ class Activity:
         self.EST = -1 # EST = Early Start Time 
         self.LST = -1 # LST = Late Start Time
         self.LFT = -1
-        self.startTime = -1 # Programmed Start Time (Integer like Day 0)
+        self.startTime = startTime # Programmed Start Time (Integer like Day 0)
         self.dateStartTime= -1 # Programmed Start Date Time (date)
         self.seq = 0 # Temporary variable useful for the sequencing algorithms
         self.resources = resources #List of resources
