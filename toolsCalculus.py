@@ -181,6 +181,17 @@ def predComplete (activity, completeList):
                     predcount+=1
         if predcount==prednb :
             return True
+        
+def buildResources(listActivities, projectDur):
+    nbResources = len(listActivities[1].resources)
+    listResources = [[0] * nbResources] * projectDur
+    
+    for activitiy in listActivities:
+        if (activitiy.ident == -1 or activitiy.ident == -2):
+            continue
+        for i in range(activitiy.startTime, activitiy.startTime + activitiy.duration):
+            listResources[i] = addRes(activitiy.resources, listResources[i])
+    return listResources
 
 
     

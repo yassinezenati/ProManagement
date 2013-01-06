@@ -4,7 +4,7 @@ Created on 2 janv. 2013
 @author: Salah Benmoussati, Yassine Zenati
 '''
 
-from toolsCalculus import totalFloatEarly, totalFloatLate, addRes, projectDuration
+from toolsCalculus import totalFloatEarly, totalFloatLate, projectDuration, buildResources
 from ResourceLeveling import buildNewResourceList
 
 def analyseActivity(listActivities, act, projectResources):
@@ -13,16 +13,7 @@ def analyseActivity(listActivities, act, projectResources):
     
     # Build a table of resources per day 
     
-    nbResources = len(listActivities[1].resources)
-    listResources = [[0] * nbResources] * projectDur
-    
-    for activitiy in listActivities:
-        if (activitiy.ident == -1 or activitiy.ident == -2):
-            continue
-        for i in range(activitiy.startTime, activitiy.startTime + activitiy.duration):
-            listResources[i] = addRes(activitiy.resources, listResources[i])
-            
-                    
+    listResources = buildResources(listActivities, projectDur)
         
     listDelays = []
     print "The activity " + act.name + " is supposed to start the day " + str(act.startTime)

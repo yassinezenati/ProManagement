@@ -3,24 +3,14 @@ Created on 2 janv. 2013
 
 @author: Salah Benmoussati, Yassine Zenati
 '''
-from toolsCalculus import addRes, minusRes, overUseRes, totalFloatLate, findNonCriticalAct, projectDuration
+from toolsCalculus import addRes, minusRes, overUseRes, totalFloatLate, findNonCriticalAct, projectDuration, buildResources
 
 def resourceLeveling(listActivities, projectResources):
     
     projectDur = projectDuration(listActivities)
     listNonCriticalAct = findNonCriticalAct(listActivities)
     
-    nbResources = len(listActivities[1].resources) 
-    
-    # Build a table of resources per day 
-    
-    listResources = [[0] * nbResources] * projectDur
-        
-    for act in listActivities:
-        if (act.ident == -1 or act.ident == -2):
-            continue
-        for i in range(act.startTime, act.startTime + act.duration):
-            listResources[i] = addRes(act.resources, listResources[i])
+    listResources = buildResources(listActivities, projectDur)
     
     # Calculate totalFloat of each activity and sort by totalFloat
     for activity in listNonCriticalAct:
@@ -63,8 +53,6 @@ def resourceLeveling(listActivities, projectResources):
                     oldListRSD = newListRSD
                     act.startTime = seq
      
-    # return list of actual resources                
-    return minimizedList
     
 def buildNewResourceList(listRes, act, newSeq, maxRes):
     """

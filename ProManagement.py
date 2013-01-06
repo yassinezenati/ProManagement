@@ -8,7 +8,7 @@ from PMFiles import PMFiles
 import sys
 from CriticalPathMethod import criticalPathMethod
 from Sequencing import parallelSequencing
-from toolsCalculus import find_all_paths, buildList, findNonCriticalAct, projectDuration
+from toolsCalculus import find_all_paths, buildList, findNonCriticalAct, projectDuration, buildResources
 from EarlyLateProcesses import earlyOrLateProcess
 from ResourceLeveling import resourceLeveling
 from Flexibility import analyseActivity
@@ -25,16 +25,22 @@ daysOffs = conf["daysOff"]
 
 buildList(listActivities)
 
-#earlyOrLateProcess(listActivities, [5,8,7,6], True)
+#earlyOrLateProcess(listActivities, resources, True)
 
-#earlyOrLateProcess(listActivities, [5,8,7,6], False)
+#earlyOrLateProcess(listActivities, resources, False)
 
-resourceLeveling(listActivities, resources)
+#newRes = resourceLeveling(listActivities, resources)
+
+#print buildResources(listActivities, projectDuration(listActivities))
 
 for act in listActivities:
     print act.name + "startTime = " + str(act.startTime)
 
-#analyseActivity(listActivities, listActivities[10], [5,8,7,6])
+# SALAH, tu dois remplacer le sys.argv[3] par un entier que l'utilisateur aura saisi s'il choisit 
+# de faire de la flexibilite (en vrai tu lui demande si il veut deplacer une activitite
+# ce sera un truc du genre numAct = input("type the number of the activity you want to move (number
+# written in the CSV file")
+analyseActivity(listActivities, listActivities[int(sys.argv[3])], resources)
 
 """
 criticalPathMethod(listActivities)
