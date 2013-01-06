@@ -16,6 +16,7 @@ class Activity:
         self.EST = -1 # EST = Early Start Time 
         self.LST = -1 # LST = Late Start Time
         self.LFT = -1
+        self.totalFloat = -1
         self.startTime = startTime # Programmed Start Time (Integer like Day 0)
         self.dateStartTime= -1 # Programmed Start Date Time (date)
         self.seq = 0 # Temporary variable useful for the sequencing algorithms

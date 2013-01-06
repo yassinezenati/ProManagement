@@ -22,7 +22,6 @@ resources = conf["resources"]
 beginDate = conf["beginningDate"]
 daysOffs = conf["daysOff"]
 
-print daysOffs
 
 buildList(listActivities)
 
@@ -30,10 +29,8 @@ buildList(listActivities)
 
 #earlyOrLateProcess(listActivities, [5,8,7,6], False)
 
-"""
-print projectDuration
-resourceLeveling(listActivities, [30,20])
-"""
+resourceLeveling(listActivities, resources)
+
 for act in listActivities:
     print act.name + "startTime = " + str(act.startTime)
 

@@ -35,16 +35,13 @@ def earlyOrLateProcess(listActivities, projectresources, late):
     
     if late:
         projectDuration = sortedList[-3].seq  + sortedList[-3].duration # project duration = first activity's seq + duration
-        print projectDuration
         for act in listActivities:
             if not act.ident == -1:
                 act.startTime = projectDuration - (act.seq + act.duration)
-                print act.name + "startTime : " + str(act.startTime)
     else:
         projectDuration = sortedList[-1].seq  + sortedList[-1].duration
         for act in listActivities:
             if not act.ident == -1:
                 act.startTime = act.seq
                 act.seq = 0
-                print act.name + "startTime : " + str(act.startTime)
         

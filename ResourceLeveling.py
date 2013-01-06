@@ -7,47 +7,43 @@ from toolsCalculus import addRes, minusRes, overUseRes, totalFloatLate, findNonC
 
 def resourceLeveling(listActivities, projectResources):
     
-    projectDuration = projectDuration(listActivities)
+    projectDur = projectDuration(listActivities)
     listNonCriticalAct = findNonCriticalAct(listActivities)
     
     nbResources = len(listActivities[1].resources) 
     
     # Build a table of resources per day 
     
-    listResources = [[0] * nbResources] * projectDuration
-    
-    print listResources
-    
+    listResources = [[0] * nbResources] * projectDur
+        
     for act in listActivities:
         if (act.ident == -1 or act.ident == -2):
             continue
         for i in range(act.startTime, act.startTime + act.duration):
             listResources[i] = addRes(act.resources, listResources[i])
     
-    for cpt, res in enumerate(listResources):
-        print "jour " + str(cpt) + " res = " + str(res)
+    # Calculate totalFloat of each activity and sort by totalFloat
+    for activity in listNonCriticalAct:
+        activity.totalFloat = totalFloatLate(activity, projectDur)
     
+    firstSortNCA =  sorted(listNonCriticalAct, key=lambda activity: activity.totalFloat, reverse=True)
     # Sort the activities by finishing time
-    sortedNCA = sorted(listNonCriticalAct, key=lambda activity: activity.startTime + activity.duration, reverse=True)
+    sortedNCA = sorted(firstSortNCA, key=lambda activity: activity.startTime + activity.duration, reverse=True)
     
     #Initialisation with the current list of resources 
     minimizedList = listResources
     
     for act in sortedNCA:
-        print "act = " + act.name
         if (act.ident == -1 or act.ident == -2):
             continue
         
-        totalFloat = totalFloatLate(act, projectDuration)        
-        print "holgura total = " + str(totalFloat)
+        totalFloat = totalFloatLate(act, projectDur)        
                 
         # Try every position (sequenciation) available until we reach the end of
         # the total float (holgura total)
        
         oldListRSD = evaluateResourceList(minimizedList)
-        
-        print "RSD 0 = " + str(oldListRSD)
-        
+                
         for seq in range(act.startTime + 1, act.startTime + totalFloat + 1):
             
             # Build the list with the new resources
@@ -60,18 +56,16 @@ def resourceLeveling(listActivities, projectResources):
                 # Evaluate the new list of resources
                 newListRSD = evaluateResourceList(newList)
                 
-                print "RSD" + str(seq) + " = "  + str(newListRSD)
-                print minimizedList
-                print newList
-                
                 # If the new sequenciation is better
                 # The activity startTime and the oldListRSD and minimizedList are updated
                 if sum(newListRSD) < sum(oldListRSD):
                     minimizedList = newList
                     oldListRSD = newListRSD
                     act.startTime = seq
-                    
-                
+     
+    # return list of actual resources                
+    return minimizedList
+    
 def buildNewResourceList(listRes, act, newSeq, maxRes):
     """
     Build a new list of resources to be tested, considering:
@@ -94,8 +88,6 @@ def buildNewResourceList(listRes, act, newSeq, maxRes):
     for day in range(newSeq, newSeq+act.duration):
         newRes = addRes(newList[day], act.resources)
         if overUseRes(newRes, maxRes):
-            print newRes
-            print maxRes
             return None
         newList[day] = newRes
     

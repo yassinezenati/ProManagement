@@ -78,8 +78,3 @@ def parallelSequencing(listActivities) :
             else:
                 finish = True  
                         
-    print "============================================================================"
-    for act in complete : 
-        print "--------------------------activity : ", act.name , " finish day ", act.seq
-    print "============================================================================"
-    print available 
